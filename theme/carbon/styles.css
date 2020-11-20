@@ -1,0 +1,57 @@
+input[type='text'], input[type='password'] {
+	max-width: 400px;
+}
+
+.col-title {
+	width: 100% !important;
+}
+
+
+@media screen and (max-width: 800px) {
+	body {
+		font-size: 12pt;
+		font-family: "Helvetica";
+	}
+}
+
+@media screen and (max-width: 800px) {
+	input[type='text'], input[type='dropdown'], select, textarea {
+		font-size: 12pt;
+		padding: 10px;
+	}
+}
+
+#sidebar-top {
+	margin-top: 0;}
+
+
+#nav li {
+	padding: 3px 0
+}
+
+.nav-heading-toggle {
+	margin-left: 10px;
+}
+
+@media screen and (max-width: 800px) {
+	.nav-title {
+		font-size: 12pt;
+	}
+}
+
+
+div.field {
+	margin-bottom: 35px;
+} .login-form div.field {
+	margin-bottom: auto;
+}
+@media screen and (max-width: 800px) {
+	thead th {
+		font-size: 12pt;
+	}
+}
+
+label.field-label {
+	font-size: 14pt;
+	padding: 0 0 10px;
+}

@@ -1,0 +1,4 @@
+config.php
+uploads/*
+!uploads/.htaccess
+addons/kfunctions.php
