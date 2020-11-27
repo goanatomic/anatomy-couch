@@ -54,7 +54,7 @@
     define( 'K_RECAPTCHA_SECRET_KEY', '' );
 
     // Tokbox
-    define( 'K_TOKBOX_EMBED_ID', '00dadf97-449e-4bbf-a015-426ec4b10e81' );
+    define( 'K_TOKBOX_EMBED_ID', '' );
     define( 'K_TOKBOX_KEY', '' );
     define( 'K_TOKBOX_SECRET', '' );
 
