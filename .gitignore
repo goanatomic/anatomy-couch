@@ -2,3 +2,4 @@ config.php
 uploads/*
 !uploads/.htaccess
 addons/kfunctions.php
+error_log
