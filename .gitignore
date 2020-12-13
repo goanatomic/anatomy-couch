@@ -1,5 +1,6 @@
-./config.php
-uploads/*
+/addons/extended/config.php
+/config.php
+/uploads/*
 !uploads/.htaccess
-addons/kfunctions.php
-error_log
+/addons/kfunctions.php
+/error_log
