@@ -3,7 +3,7 @@
  *  TableGear (Dynamic table data in HTML)
  *
  *  Version: 1.6 for jQuery
- *  Documentation: AndrewPlummer.com (http://www.andrewplummer.com/code/tablegear/)
+ *  Documentation: AndrewPlummer.com (https://github.com/andrewplummer/TableGear)
  *  Inspired by: TableKit for Prototype (http://www.millstream.com.au/view/code/tablekit/)
  *  Written for: jQuery 1.4
  *  License: MIT-style License
@@ -64,11 +64,11 @@
 
       headers = $('thead th', table)
 
-      tbody = requireElement('tbody', table, '<tbody> is required inside <table>');
+      tbody = requireElement('> tbody', table, '<tbody> is required inside <table>');
       tbody.bind( '_reorder', _reordered );
 
       nextid = 0;
-      $('tbody tr', table).each(function(rowIndex){
+      table.find("> tbody > tr").each(function(rowIndex){
         var el = $(this);
         if(el.hasClass('noDataRow')) return;
         initializeRow(el, rowIndex);
@@ -119,7 +119,7 @@
 
     function update(){
       rows = [];
-      $('tbody tr', table).each(function(rowIndex){
+      table.find("> tbody > tr").each(function(rowIndex){
         var el = $(this);
         rows.push(el);
       });

@@ -455,7 +455,7 @@
                     $func = $this->name;
                     if( $this->name=='if' || $this->name=='else' || $this->name=='while' || $this->name=='extends' || $this->name=='break' || $this->name=='continue' ) $func = 'k_'.$func;
 
-                    if( method_exists($TAGS, $func) ){
+                    if( $func[0]!=='_' && method_exists($TAGS, $func) ){
                         if( !($this->name=='if' || $this->name=='while' || $this->name=='not' || $this->name=='else_if') ){
                             $params = $FUNCS->resolve_parameters( $this->attributes );
                         }
@@ -487,8 +487,13 @@
                         }
                         else{
                             // after search in installed modules..
-                            ob_end_clean();
-                            die( 'ERROR! Unknown tag: "'. $this->name . '"' );
+                            // HOOK: tag_unknown
+                            $skip = $FUNCS->dispatch_event( 'tag_unknown', array($this->name, &$this, &$html) );
+                            if( !$skip ){
+                                ob_end_clean();
+                                $err_msg = strlen( trim($html) ) ? $html : 'ERROR! Unknown tag: "'. $this->name . '"';
+                                die( $err_msg );
+                            }
                         }
                     }
                     break;
@@ -597,7 +602,7 @@
                 $brackets_count=0;
 
                 while( $this->pos<$len ){
-                    $c = $this->str{$this->pos};
+                    $c = $this->str[$this->pos];
                     if( $c=="\n" ) $this->line_num++;
 
                     switch( $this->state ){
@@ -621,7 +626,7 @@
                                 }
                             }
                             elseif( $this->quit_at_char && $c==$this->quit_at_char ){
-                                if( $this->str{$this->pos-1} != '\\' ){
+                                if( $this->str[$this->pos-1] != '\\' ){
                                     break 2;
                                 }
                             }
@@ -649,15 +654,15 @@
                                     $attr['value'] = str_replace( '\\'.$quote_type, $quote_type, $attr['value'] );
                                 }
                             }
-                            $push = $this->str{$this->pos-1} != '/';
+                            $push = $this->str[$this->pos-1] != '/';
                             $this->add_child( K_NODE_TYPE_CODE, $tag_name, $attributes, '', $push );
 
                             $processing_cond = false;
                             $brackets_count = 0;
 
                             // skip the newline immediately following this tag
-                            if( $this->str{$this->pos+1}=="\r" ){ $this->pos++; }
-                            if( $this->str{$this->pos+1}=="\n" ){ $this->pos++; }
+                            if( $this->str[$this->pos+1]=="\r" ){ $this->pos++; }
+                            if( $this->str[$this->pos+1]=="\n" ){ $this->pos++; }
 
                             $starts = $this->pos+1;
                             $this->state = K_STATE_TEXT;
@@ -674,8 +679,8 @@
                                 unset( $this->stack[count($this->stack)-1] );
 
                                 // skip the newline immediately following this tag
-                                if( $this->str{$this->pos+1}=="\r" ){ $this->pos++; }
-                                if( $this->str{$this->pos+1}=="\n" ){ $this->pos++; }
+                                if( $this->str[$this->pos+1]=="\r" ){ $this->pos++; }
+                                if( $this->str[$this->pos+1]=="\n" ){ $this->pos++; }
 
                                 $starts = $this->pos+1;
                                 $this->state = K_STATE_TEXT;
@@ -690,7 +695,7 @@
                                     $starts = $this->pos+1;
                                     $this->state = K_STATE_ATTR_NAME;
                                 }
-                                elseif( ($c=='>') || ($c=='/' && $this->str{$this->pos+1}=='>') ){
+                                elseif( ($c=='>') || ($c=='/' && $this->str[$this->pos+1]=='>') ){
                                     $tag_name = substr( $this->str, $starts, $this->pos-$starts );
                                     if( $c=='>') $this->pos--;
                                     $this->state = K_STATE_TAG_OPEN;
@@ -746,7 +751,7 @@
                                     $this->pos--;
                                     $this->state = K_STATE_ATTR_OP;
                                 }
-                                elseif( ($c=='>') || ($c=='/' && $this->str{$this->pos+1}=='>') ){
+                                elseif( ($c=='>') || ($c=='/' && $this->str[$this->pos+1]=='>') ){
                                     if( isset($attr) && in_array($attr['op'], $this->logical_ops) ){
                                         $this->raise_error( "ATTRIB_NAME: Orphan \"".$attr['op'] ."\"", $this->line_num, $this->pos );
                                     }
@@ -781,7 +786,7 @@
                                 $starts = $this->pos+1;
                                 $this->state = K_STATE_ATTR_VAL;
                             }
-                            elseif( ($c=='>') || ($c=='/' && $this->str{$this->pos+1}=='>') ){
+                            elseif( ($c=='>') || ($c=='/' && $this->str[$this->pos+1]=='>') ){
                                 if( $c=='>') $this->pos--;
                                 $this->state = K_STATE_TAG_OPEN;
                             }
@@ -840,7 +845,7 @@
                             else{
                                 if( !$quote_type ){
                                     if( !$this->is_valid_for_label($c) ){
-                                        if( ($c=='>') || ($c=='/' && $this->str{$this->pos+1}=='>') ){
+                                        if( ($c=='>') || ($c=='/' && $this->str[$this->pos+1]=='>') ){
                                             $attr['value'] = substr( $this->str, $starts, $this->pos-$starts );
                                             $attr['value_type'] = K_VAL_TYPE_VARIABLE;
                                             if( $c=='>') $this->pos--;
@@ -874,7 +879,7 @@
                                 }
                                 else{
                                     if( $c==$quote_type ){
-                                        if( $this->str{$this->pos-1}!='\\' ){
+                                        if( $this->str[$this->pos-1]!='\\' ){
                                             $starts++;
                                             $attr['value'] = substr( $this->str, $starts, $this->pos-$starts );
                                             $attr['value_type'] = K_VAL_TYPE_LITERAL;
@@ -917,7 +922,7 @@
                                 $attr['op']=$c;
                                 $starts++;
                             }
-                            elseif( ($c=='>') || ($c=='/' && $this->str{$this->pos+1}=='>') ){
+                            elseif( ($c=='>') || ($c=='/' && $this->str[$this->pos+1]=='>') ){
                                 if( $c=='>') $this->pos--;
                                 $this->state = K_STATE_TAG_OPEN;
                             }
@@ -1030,7 +1035,7 @@
             $len = strlen( $this->str );
             while( $pos < $len ){
                 $pos = strpos($this->str, '"', $pos);
-                if( $pos && $this->str{$pos-1}!='\\' ) return $pos;
+                if( $pos && $this->str[$pos-1]!='\\' ) return $pos;
                 $pos++;
             }
             return FALSE;
@@ -1045,8 +1050,8 @@
         }
 
         function is_logical_op(){
-            $op = $this->str{$this->pos};
-            if( in_array($op . $this->str{$this->pos+1}, $this->logical_ops) ) return $op;
+            $op = $this->str[$this->pos];
+            if( in_array($op . $this->str[$this->pos+1], $this->logical_ops) ) return $op;
             return false;
         }
 

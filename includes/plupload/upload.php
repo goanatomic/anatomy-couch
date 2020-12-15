@@ -161,10 +161,10 @@ $(function() {
 
         filters: {
             // Maximum file size
-            max_file_size: '10mb',
+            max_file_size: '2mb',
             // Specify what files to browse for
             mime_types: [
-                {title: "Image files", extensions: "jpg,jpeg,gif,png,bmp,heic"}
+                {title: "Image files", extensions: "jpg,jpeg,gif,png,bmp"}
             ]
         },
 

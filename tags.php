@@ -41,13 +41,22 @@
 
         function test( $params, $node ){
             global $FUNCS, $CTX;
-            $children = $node->children;
 
-            foreach( $children as $child ){
+            extract( $FUNCS->get_named_vars(
+                        array(
+                               'ignore'=>'0',
+                               'hide'=>'0',
+                              ),
+                        $params)
+                   );
+            $ignore = ( $ignore==1 ) ? 1 : 0;
+            if( $ignore ) return;
+            $hide = ( $hide==1 ) ? 1 : 0;
+
+            foreach( $node->children as $child ){
                 $html .= $child->get_HTML();
             }
-            return $html;
-
+            return ( $hide )? '' : $html;
         }
 
         // Dumps all variables present in all the contexts starting from root upto the context the tag was invoked from.
@@ -391,6 +400,7 @@
                                'startcount'=>'0',
                                'token'=>'',
                                'is_json'=>'0',
+                               'is_regex'=>'0',
                               ),
                         $params)
                    );
@@ -400,30 +410,38 @@
             $startcount = $FUNCS->is_int( $startcount ) ? intval( $startcount ) : 1;
             $token = trim( $token );
             $is_json = ( $is_json==1 ) ? 1 : 0;
+            $is_regex = ( $is_regex==1 ) ? 1 : 0;
 
             if( $is_json && !is_array($var) ){ $var = $FUNCS->json_decode( $var ); }
 
             if( !is_array($var) ){
-                if( !$sep ) $sep = '|';
-                if( $sep == '\r\n' || $sep == '\r' || $sep == '\n' ){
-                    $var = str_replace( array("\r\n", "\r", "\n" ), "\n", $var );
-                    $sep = "\n";
-                }
-                elseif( $sep == '\t' ){
-                    $sep = "\t";
+                if( $is_regex ){
+                    $regex = $sep;
                 }
                 else{
-                    $use_preg=1;
+                    if( !$sep ) $sep = '|';
+                    if( $sep == '\r\n' || $sep == '\r' || $sep == '\n' ){
+                        $var = str_replace( array("\r\n", "\r", "\n" ), "\n", $var );
+                        $sep = "\n";
+                    }
+                    elseif( $sep == '\t' ){
+                        $sep = "\t";
+                    }
+                    else{
+                        $use_preg=1;
+                    }
                 }
 
                 if( $var ){
-                    if( $use_preg ){
+                    if( $regex ){
+                        $arr_vars = array_map( "trim", preg_split( $regex, $var ) );
+                    }
+                    elseif( $use_preg ){
                         $arr_vars = array_map( "trim", preg_split( "/(?<!\\\)".preg_quote($sep, '/')."/", $var ) ); // allows escaping of separator with a backslash
                     }
                     else{
                         $arr_vars = array_map( "trim", explode( $sep, $var ) );
                     }
-
                 }
 
                 if( is_array($arr_vars) ){
@@ -652,7 +670,7 @@
 
             // What are the candidate file names for the current view?
             // First check cache
-            if( array_key_exists('cached_valid_files_for_view', $FUNCS) ){
+            if( property_exists($FUNCS, 'cached_valid_files_for_view') ){
                 $valid_files = $FUNCS->cached_valid_files_for_view;
             }
             else{
@@ -1113,7 +1131,7 @@
         }
 
         function k_while( $params, $node ){
-            global $FUNCS;
+            global $FUNCS, $CTX;
             $children = $node->children;
 
             $safety = 0;
@@ -1625,6 +1643,7 @@
                                        'k_type'=>$attr['type'],
                                        'hidden'=>$attr['hidden'],
                                        'search_type'=>$attr['search_type'],
+                                       'searchable'=>$attr['searchable'],
                                        'k_order'=>$attr['order'],
                                        'default_data'=>$html,
                                        'required'=>$attr['required'],
@@ -1941,7 +1960,7 @@
 
             // query
             if( !$show_hidden ) $sql = 'hidden < 1 and ';
-            $sql .= 'ISNULL(type) || type=\'\' ORDER BY '.$orderby.' '.$order.', id '. $order;
+            $sql .= '(ISNULL(type) || type=\'\') ORDER BY '.$orderby.' '.$order.', id '. $order;
             $rs = $DB->select( K_TBL_TEMPLATES, array('*'), $sql );
             if( count($rs) ){
                 $count = count($rs);
@@ -2906,6 +2925,10 @@
             if( $count ){
                 for( $x=0; $x<$count; $x++ ){
                     $rec = $rs[$x];
+
+                    // HOOK: pre_alter_page_tag_context
+                    $FUNCS->dispatch_event( 'pre_alter_page_tag_context', array($rec, $mode, $params, $node, $rec_tpl, $token, $x, $count) );
+
                     if( $mode==2 ){ //Comments
                         $CTX->set( 'k_comment_id', $rec['id'] );
                         $CTX->set( 'k_comment_page_id', $rec['page_id'] );
@@ -3015,6 +3038,9 @@
                     foreach( $node->children as $child ){
                         $html .= $child->get_HTML();
                     }
+
+                    // HOOK: post_alter_page_tag_context
+                    $FUNCS->dispatch_event( 'post_alter_page_tag_context', array($rec, $mode, $params, $node, $rec_tpl, $token, $x, $count) );
                 }
             }
             else{ // find and execute 'no_results' tag
@@ -3948,7 +3974,7 @@ FORM;
             // @current-1, @current-2 etc. - start from parent of most current item at x level above it.
             if( $root || $childof ){ // root takes precedence over childof
                 $special = ( $root ) ? $root : $childof;
-                if( $special{0}=='@' ){
+                if( $special[0]=='@' ){
                     $special = substr( $special, 1 );
 
                     // find the most current item
@@ -4419,7 +4445,7 @@ FORM;
             // @current-1, @current-2 etc. - start from parent of most current item at x level above it.
             if( $root || $childof ){ // root takes precedence over childof
                 $special = ( $root ) ? $root : $childof;
-                if( $special{0}=='@' ){
+                if( $special[0]=='@' ){
                     $special = substr( $special, 1 );
 
                     // find the most current item
@@ -5310,6 +5336,7 @@ FORM;
 
         function form( $params, $node ){
             global $CTX, $FUNCS, $PAGE, $DB;
+            if( !is_object($PAGE) ){ $PAGE = new stdClass(); }
 
             $html = '<form ';
 
@@ -6109,7 +6136,7 @@ MAP;
         function paypal_processor( $params, $node ){
             global $CTX, $FUNCS, $PAGE;
 
-            if( !isset($_GET['paypal_ipn']{0}) ) return; //not being called from PayPal with IPN
+            if( !isset($_GET['paypal_ipn'][0]) ) return; //not being called from PayPal with IPN
 
             extract( $FUNCS->get_named_vars(
                         array(
@@ -7083,7 +7110,7 @@ MAP;
             $name = trim( $name );
             $has_default = ( strlen($default) ) ? 1 : 0;
 
-            if( isset($_COOKIE[$name]{0}) ){
+            if( isset($_COOKIE[$name][0]) ){
                 $val = $FUNCS->cleanXSS( $_COOKIE[$name] );
             }
             if( $has_default && !strlen($val) ){ $val = $default; }
@@ -7690,7 +7717,7 @@ MAP;
 
                 // resolve values that point to PHP objects (always begin with a '$')
                 for( $x=0; $x<count($args); $x++ ){
-                    if( $args[$x]{0}=='$' ){
+                    if( $args[$x][0]=='$' ){
                         $obj = $CTX->get_object( substr($args[$x], 1) );
                         if( $obj ) $args[$x] = $obj;
                     }
@@ -7862,6 +7889,18 @@ MAP;
 
             $name = trim( $params[0]['rhs'] );
             $res = ( array_key_exists($name, $FUNCS->funcs) ) ? '1' : '0';
+
+            return $res;
+        }
+
+        function tag_exists( $params, $node ){
+            global $FUNCS, $TAGS;
+            if( count($node->children) ) {die("ERROR: Tag \"".$node->name."\" is a self closing tag");}
+
+            $name = trim( $params[0]['rhs'] );
+            if( $name=='if' || $name=='else' || $name=='while' || $name=='extends' || $name=='break' || $name=='continue' ) $name = 'k_'.$name;
+
+            $res = ( $name[0]!=='_' && method_exists($TAGS, $name) || array_key_exists($name, $FUNCS->tags) ) ? '1' : '0';
 
             return $res;
         }

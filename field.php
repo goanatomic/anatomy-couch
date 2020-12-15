@@ -199,7 +199,7 @@
                         $dyn_param = 'k_'.$dyn_param;
                     }
 
-                    if( array_key_exists($dyn_param, $this) && $this->$dyn_param ){
+                    if( property_exists($this, $dyn_param) && $this->$dyn_param ){
                         if( defined('K_SNIPPETS_DIR') ){ // always defined relative to the site
                             $base_snippets_dir = K_SITE_DIR . K_SNIPPETS_DIR . '/';
                         }
@@ -347,6 +347,8 @@
         function get_data(){
             global $Config, $CTX;
 
+            if( $this->k_type=='message' ){ return $this->default_data; }
+
             if( !$this->data ){
                 // make sure it is not numeric 0
                 $data = ( is_numeric($this->data) ) ? (string)$this->data : $this->default_data;
@@ -364,7 +366,7 @@
             else{
                 // add domain info to uploaded items
                 if( $this->k_type=='image' || $this->k_type=='thumbnail' || $this->k_type=='file' ){
-                    if( $data{0}==':' ){ // if marker
+                    if( $data[0]==':' ){ // if marker
                         $data = substr( $data, 1 );
                         $folder = ( $this->k_type=='thumbnail' ) ? 'image' : $this->k_type;
                         $domain_prefix = $Config['k_append_url'] . $Config['UserFilesPath'] . $folder . '/';
@@ -618,7 +620,7 @@
                 $f->page->CKEditor->config['height'] = 240;
 
             }
-            $f->page->CKEditor->textareaAttributes = array("style" => "visibility:hidden", "id" => $input_id, "cols" => 80, "rows" => 15);
+            $f->page->CKEditor->textareaAttributes = array("style" => "visibility:hidden", "class" => "ckeditor", "id" => $input_id, "cols" => 80, "rows" => 15);
 
             //$config['baseHref'] = K_SITE_URL;
             // RTL
@@ -645,7 +647,7 @@
                 $arr_custom_css = array_map( "trim", explode( $separator, $f->css ) );
                 foreach( $arr_custom_css as $css ){
                     if( strpos($css, '://')===false ){
-                        $css = K_SITE_URL . (( $css{0}=='/' ) ? substr($css, 1) : $css);
+                        $css = K_SITE_URL . (( $css[0]=='/' ) ? substr($css, 1) : $css);
                     }
                     $arr_css[] = $css;
                 }
@@ -657,7 +659,7 @@
             if( $f->custom_styles ){
                 list( $custom_style_name, $custom_style_file ) = array_map( "trim", explode( $val_separator, $f->custom_styles ) );
                 if( strpos($custom_style_file, '://')===false ){
-                    $custom_style_file = K_SITE_URL . (( $custom_style_file{0}=='/' ) ? substr($custom_style_file, 1) : $custom_style_file);
+                    $custom_style_file = K_SITE_URL . (( $custom_style_file[0]=='/' ) ? substr($custom_style_file, 1) : $custom_style_file);
                 }
                 $config['stylesCombo_stylesSet'] = $custom_style_name . ':' . $custom_style_file;
             }
@@ -741,6 +743,9 @@
                     array( 'ShowBlocks', 'Preview', 'Maximize', '-', 'Source'  )
                 );
             }
+
+            // HOOK: ckeditor_alter_config
+            $FUNCS->dispatch_event( 'ckeditor_alter_config', array(&$config, $f, $input_name, $input_id, $dynamic_insertion) );
 
             if( $repeatable ){
                 ob_start();
@@ -826,7 +831,7 @@
 
                 }
                 else{ /* not dynamically inserted but is being rendered within repeatable regions */
-                    $config['removePlugins']='resize';
+                    $config['removePlugins'] = ( trim($config['removePlugins'])!='' ) ? $config['removePlugins'].',resize' : 'resize';
 
                     static $done=0;
                     if( !$done ){
@@ -1067,7 +1072,7 @@
             elseif( $this->k_type=='captcha' ){
                 $fmt = $this->captcha_format;
                 for( $x=0; $x<7; $x++ ){
-                    switch( @$fmt{$x} ){
+                    switch( @$fmt[$x] ){
                         case '-':
                             $html .= '<br>';
                             break;
@@ -1444,7 +1449,7 @@
             $data = $this->data;
 
             // add domain info to internal links
-            if( $data{0}==':' ){ // if marker
+            if( $data[0]==':' ){ // if marker
                 $data = substr( $data, 1 );
                 $data = K_SITE_URL . $data;
             }

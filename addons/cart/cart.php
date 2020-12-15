@@ -304,6 +304,7 @@
                             $arr_sort_keys = array(); // used to sort items in the cart
                             $arr_display_attrs = array(); // an array of all selected variant options with values
                             $arr_sort_keys[] = $pg->page_name;
+                            $arr_sort_keys[] = $pg->id;
 
                             //get the price modifiers, if any
                             if( isset($pp_options) ){
@@ -355,7 +356,7 @@
                             }
                             // if all ok, add to cart
                             if( $all_ok ){
-                                // create the sorting key - page_name + attributes
+                                // create the sorting key - page_name + id + attributes
                                 $sorting_key = $FUNCS->make_key( $arr_sort_keys );
 
                                 // create a unique id for this item. Will be passed on for future actions on cart.
@@ -381,6 +382,9 @@
                                        'options' => $arr_display_attrs,
                                        'requires_shipping' => ( $pp_requires_shipping ) ? 1 : 0,
                                     );
+
+                                    // HOOK: cart_alter_custom_fields
+                                    $FUNCS->dispatch_event( 'cart_alter_custom_fields', array(&$arr_custom_fields, &$pg, &$this) );
 
                                     // Add custom attributes if any
                                     foreach( $arr_custom_fields as $k=>$v ){

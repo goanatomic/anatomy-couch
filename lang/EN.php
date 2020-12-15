@@ -247,7 +247,7 @@
     $t['left'] = 'Move Left';
     $t['right'] = 'Move Right';
     $t['crop'] = 'Crop';
-    $t['menu_templates'] = 'Pages';
+    $t['menu_templates'] = 'Templates';
     $t['menu_modules'] = 'Administration';
     $t['cancel'] = 'Cancel';
     $t['selected'] = 'Selected';

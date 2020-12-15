@@ -465,9 +465,8 @@
                     elseif( $k=='k_pointer_link' ){
                         $field_info['required'] = '0';
                         $field_info['k_desc'] = $FUNCS->t('link_url_desc');
-                        $field_info['validator'] = 'regex=/^\s*(?:http:\/\/|https:\/\/)/i # KWebpage::validate_masquerade_link';
+                        $field_info['validator'] = 'KWebpage::validate_masquerade_link';
                         $field_info['k_separator'] ='#';
-                        $field_info['validator_msg'] ='regex=Must begin with http:// or https://';
                         $arr_sys_fields[] = new KLinkUrlField( $field_info, $this, $this->fields );
                     }
                     elseif( $k=='k_file_meta' ){
@@ -507,9 +506,12 @@
 
                 // HOOK: alter_fields_info
                 // All the field objects (system as well as custom) are ready and accessible by names.
-                $FUNCS->dispatch_event( 'alter_fields_info', array(&$this->_fields, &$this) );
+                $skip_cache = 0;
+                $FUNCS->dispatch_event( 'alter_fields_info', array(&$this->_fields, &$this, &$skip_cache) );
 
-                $FUNCS->cached_fields[$this->tpl_id] = $this->fields;
+                if( !$skip_cache ){
+                    $FUNCS->cached_fields[$this->tpl_id] = $this->fields;
+                }
             }
         }
 
@@ -1108,7 +1110,7 @@
                                             $match = $path_parts['dirname'].$matches[1].'.'.$path_parts['extension'];
                                             if( $f->data == $match ){
                                                 $existing_thumb = $path_parts['basename'];
-                                                if( $existing_thumb{0}==':' ) $existing_thumb = substr( $existing_thumb, 1 );
+                                                if( $existing_thumb[0]==':' ) $existing_thumb = substr( $existing_thumb, 1 );
                                             }
                                         }
                                     }
@@ -1453,7 +1455,7 @@
                             $orig_img = $f->data;
                             $cur_img = $this->fields[$x]->data;
                                 if( $orig_img != $cur_img ){
-                                    if( $orig_img{0}==':' ){ // if local
+                                    if( $orig_img[0]==':' ){ // if local
                                     $orig_img = $Config['UserFilesAbsolutePath'] . 'image/' . substr( $orig_img, 1 );
                                     @unlink( $orig_img );
                                 }
@@ -1602,7 +1604,7 @@
                         $f = $this->fields[$x];
                         if( (!$f->system) && (($f->k_type=='image' && $f->name=='gg_image')||($f->k_type=='thumbnail' && $f->assoc_field=='gg_image')) ){
                             $src = $f->data;
-                            if( $src{0}==':' ){ // if local
+                            if( $src[0]==':' ){ // if local
                                 $src = $Config['UserFilesAbsolutePath'] . 'image/' . substr( $src, 1 );
                                 @unlink( $src );
                             }
