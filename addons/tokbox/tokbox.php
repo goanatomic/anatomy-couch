@@ -1,13 +1,12 @@
 <?php
 
 if ( !defined('K_COUCH_DIR') ) die(); // cannot be loaded directly
-require( K_COUCH_DIR . 'addons/tokbox/config.php');
 
 use OpenTok\OpenTok;
 use OpenTok\MediaMode;
 use OpenTok\Session;
 use OpenTok\Role;
-$opentok = new OpenTok(M_TOKBOX_KEY, M_TOKBOX_SECRET);
+$opentok = new OpenTok(K_TOKBOX_KEY, K_TOKBOX_SECRET);
 
 class TokboxSessionId {
     public static function generateSessionId(){
@@ -23,7 +22,9 @@ class TokboxToken {
 		if( count($node->children) ) {die("ERROR: Tag \"".$node->name."\" is a self closing tag");}
         extract( $FUNCS->get_named_vars(
 		    array(
-				'session'=>'',
+				'session' => '',
+				'role' => '',
+				'name' => ''
 	         ), $params)
 		);
 		if ($role = 'moderator') {
@@ -32,8 +33,8 @@ class TokboxToken {
         $session = trim($session);
 		$token = $opentok->generateToken($session, array(
 			'role'       => $role,
-			'expireTime' => time()+(7 * 24 * 60 * 60), // in one week
-			'data'       => 'name=Johnny',
+			'expireTime' => time()+(1 * 24 * 60 * 60), // in one day
+			'data'       => 'name=' . $name,
 			'initialLayoutClassList' => array('focus')
 		));
 		return $token;
