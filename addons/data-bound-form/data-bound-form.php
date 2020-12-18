@@ -45,7 +45,7 @@
             if( $node->name=='db_persist_form' && count($node->children) ) {die("ERROR: Tag \"".$node->name."\" is a self closing tag");}
 
             // handle params
-            $arr_known_params = array( '_invalidate_cache'=>'0', '_auto_title'=>'0', '_token'=>'' );
+            $arr_known_params = array( '_invalidate_cache'=>'0', '_auto_title'=>'0', '_token'=>'', '_fields'=>'' );
             if( $node->name=='db_persist' ){
                 $arr_known_params = array_merge( $arr_known_params, array('_masterpage'=>'', '_mode'=>'', '_page_id'=>'', '_separator'=>'|', '_set_errors_in_context'=>'0') );
             }
@@ -57,6 +57,7 @@
             $_auto_title = ( $_auto_title==1 ) ? 1 : 0;
             $_token = trim( $_token  );
             $_set_errors_in_context = ( $_set_errors_in_context==1 ) ? 1 : 0;
+            $_fields = ( is_array($_fields) ) ? $_fields : array();
 
             // get down to business
             if( $node->name=='db_persist_form' ){
@@ -118,7 +119,7 @@
             }
 
             // gather static values provided as parameters of this tag
-            $fields = array();
+            $fields = count( $_fields ) ? $_fields : array();
             foreach( $params as $param ){
                 $pname = strtolower( trim($param['lhs']) );
                 if( array_key_exists($pname, $arr_known_params) ) continue;
@@ -131,27 +132,52 @@
             }
 
             if( count($fields) ){
-                for( $x=0; $x<count($pg->fields); $x++ ){
-                    $f = &$pg->fields[$x];
-                    if( isset($fields[$f->name]) ){
-                        if( $f->k_type== 'checkbox' ){
-                            // supplied static checkbox values are supposed to be comma-separated -
-                            // this needs to be changed to match the separator expected by page-field
-                            $separator = ( $f->k_separator ) ? $f->k_separator : '|';
-                            $sep = '';
-                            $str_val = '';
-                            $fields[$f->name] = explode(',', $fields[$f->name]);
-                            foreach( $fields[$f->name] as $v ){
-                                $str_val .= $sep . trim( $v );
-                                $sep = $separator;
+                if( $pg instanceof KWebpage ){
+                    foreach( $fields as $key=>$val ){
+                        if( array_key_exists($key, $pg->_fields) ){
+                            $f = &$pg->_fields[$key];
+                            if( $f->k_type== 'checkbox' ){
+                                // supplied static checkbox values are supposed to be comma-separated -
+                                // this needs to be changed to match the separator expected by page-field
+                                $separator = ( $f->k_separator ) ? $f->k_separator : '|';
+                                $sep = '';
+                                $str_val = '';
+                                $val = explode(',', $val);
+                                foreach( $val as $v ){
+                                    $str_val .= $sep . trim( $v );
+                                    $sep = $separator;
+                                }
+                                $f->store_posted_changes( $str_val );
                             }
-                            $f->store_posted_changes( $str_val );
-                        }
-                        else{
-                            $f->store_posted_changes( $fields[$f->name], $node->name );
+                            else{
+                                $f->store_posted_changes( $val, $node->name );
+                            }
                         }
                     }
-                    unset( $f );
+                }
+                else{
+                    for( $x=0; $x<count($pg->fields); $x++ ){
+                        $f = &$pg->fields[$x];
+                        if( isset($fields[$f->name]) ){
+                            if( $f->k_type== 'checkbox' ){
+                                // supplied static checkbox values are supposed to be comma-separated -
+                                // this needs to be changed to match the separator expected by page-field
+                                $separator = ( $f->k_separator ) ? $f->k_separator : '|';
+                                $sep = '';
+                                $str_val = '';
+                                $fields[$f->name] = explode(',', $fields[$f->name]);
+                                foreach( $fields[$f->name] as $v ){
+                                    $str_val .= $sep . trim( $v );
+                                    $sep = $separator;
+                                }
+                                $f->store_posted_changes( $str_val );
+                            }
+                            else{
+                                $f->store_posted_changes( $fields[$f->name], $node->name );
+                            }
+                        }
+                        unset( $f );
+                    }
                 }
             }
 

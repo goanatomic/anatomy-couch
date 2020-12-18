@@ -1876,7 +1876,7 @@
             global $DB, $FUNCS;
 
             //$rs = $DB->select( K_TBL_TEMPLATES, array('name'), 'clonable=1 AND executable=1' );
-            $rs = $DB->select( K_TBL_TEMPLATES, array('name', 'custom_params'), "hidden < 2 and ISNULL(type) || type=''" );
+            $rs = $DB->select( K_TBL_TEMPLATES, array('name', 'custom_params'), "hidden < 2 and (ISNULL(type) || type='')" );
             if( count($rs) ){
                 foreach( $rs as $key=>$val ){
                     $is_index = 0;
@@ -2129,7 +2129,7 @@
             $key = '';
             for( $i = 0; $i < $len; $i++ ){
                 $pos = rand(0, strlen($chars)-1);
-                $key .= $chars{$pos};
+                $key .= $chars[$pos];
             }
             return $key;
         }
@@ -2232,7 +2232,7 @@
             $keylen = strlen( $key );
             $j = 0;
             for( $i = 0; $i < 256; $i++ ){
-                $j = ( $j + $S[$i] + ord($key{$i % $keylen}) ) % 256;
+                $j = ( $j + $S[$i] + ord($key[$i % $keylen]) ) % 256;
                 // swap
                 $tmp = $S[$i];
                 $S[$i] = $S[$j];
@@ -2695,6 +2695,12 @@
         }
 
         function invalidate_cache(){
+            global $FUNCS;
+
+            // HOOK: invalidate_cache
+            $skip = $FUNCS->dispatch_event( 'invalidate_cache' );
+            if( $skip ) return;
+
             // Invalidate cache
             $file = K_COUCH_DIR . 'cache/' . 'cache_invalidate.dat';
             if( file_exists($file) ) @unlink( $file );

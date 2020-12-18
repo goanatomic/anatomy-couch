@@ -8,18 +8,25 @@
     of software over a computer network and provide for limited attribution for the
     Original Developer. In addition, Exhibit A has been modified to be consistent with
     Exhibit B.
+
     Software distributed under the License is distributed on an "AS IS" basis, WITHOUT
     WARRANTY OF ANY KIND, either express or implied. See the License for the
     specific language governing rights and limitations under the License.
+
     The Original Code is the CouchCMS project.
+
     The Original Developer is the Initial Developer.
+
     The Initial Developer of the Original Code is Kamran Kashif (kksidd@couchcms.com).
     All portions of the code written by Initial Developer are Copyright (c) 2009, 2010
     the Initial Developer. All Rights Reserved.
+
     Contributor(s):
+
     Alternatively, the contents of this file may be used under the terms of the
     CouchCMS Commercial License (the CCCL), in which case the provisions of
     the CCCL are applicable instead of those above.
+
     If you wish to allow use of your version of this file only under the terms of the
     CCCL and not to allow others to use your version of this file under the CPAL, indicate
     your decision by deleting the provisions above and replace them with the notice
@@ -44,8 +51,14 @@
         }
 
         static function handle_params( $params ){
-            global $FUNCS, $AUTH;
+            global $AUTH;
             if( $AUTH->user->access_level < K_ACCESS_LEVEL_SUPER_ADMIN ) return;
+
+            return SecureFile::_handle_params( $params );
+        }
+
+        static function _handle_params( $params ){
+            global $FUNCS;
 
             // Default values for params
             $default_allowed_ext = array(
