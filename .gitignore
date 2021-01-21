@@ -1,5 +1,5 @@
-/addons/extended/config.php
 /config.php
+/admin/addons/extended/config.php
 /uploads/*
 !uploads/.htaccess
 /addons/kfunctions.php
