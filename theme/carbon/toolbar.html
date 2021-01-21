@@ -1,0 +1,53 @@
+<!-- Make sure account holders are members -->
+<cms:pages masterpage='accounts.php' skip_custom_fields='1'>
+    <cms:set account_holder_is_member = '0' />
+    <cms:set current_members = "<cms:related_pages 'members' ids_only='1' />" />
+    <cms:set account_holder = "<cms:related_pages 'account_holder' ids_only='1' />" />
+    <cms:if account_holder>
+        <cms:each current_members as="member_id" sep=','>
+            <cms:if member_id = account_holder>
+                <cms:incr account_holder_is_member />
+            </cms:if>
+        </cms:each>
+        <cms:if account_holder_is_member>
+            <!-- Proceed -->
+        <cms:else />
+            <cms:db_persist
+                _masterpage = 'accounts.php'
+                _mode = 'edit'
+                _page_id = k_page_id
+                members = "<cms:show current_members />,<cms:show account_holder />"
+            />
+            <cms:redirect url=k_route_link />
+        </cms:if>
+    <cms:else />
+        <!-- No account holder? Proceed. -->
+    </cms:if>
+</cms:pages>
+
+
+
+
+
+<!-- Display Couch CMS toolbar -->
+
+<div class="btn-group">
+    <cms:admin_actions childof='toolbar'>
+        <cms:if k_action_is_custom >
+            <cms:if k_action_render>
+                <cms:render k_action_render k_action_args />
+            <cms:else />
+                <cms:show k_action_html />
+            </cms:if>
+        <cms:else />
+            <a class="btn icon-collapse tt-collapse<cms:if k_action_class> <cms:show k_action_class /></cms:if>"
+                data-title="<cms:if k_action_desc><cms:show k_action_desc /><cms:else /><cms:show k_action_title /></cms:if>"
+                href="<cms:show k_action_link />"
+                <cms:if k_action_target>target="<cms:show k_action_target />"</cms:if>
+            >
+                <cms:if k_action_icon ><cms:show_icon k_action_icon /></cms:if><cms:hide>
+                </cms:hide><span class="collapse-title"><cms:show k_action_title /></span>
+            </a>
+        </cms:if>
+    </cms:admin_actions>
+</div>

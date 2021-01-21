@@ -1,11 +1,178 @@
-input[type='text'], input[type='password'] {
-	max-width: 400px;
+.admin-bullet {
+	border-radius: 50%;
+	padding: 6px;
+	background: #aaa;
+	display: inline-block;
+} .admin-bullet.good {
+	background: hsl(120, 80%, 30%);
+} .admin-bullet.caution {
+	background: hsl(35, 100%, 40%);
+} .admin-bullet.danger {
+	background: hsl(0, 80%, 30%);
+} .admin-bullet.info {
+	background: hsl(210, 100%, 50%);
+} .admin-bullet.interest {
+	background: hsl(280, 80%, 50%);
 }
 
-.col-title {
-	width: 100% !important;
+.admin-tags {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 24px 0 0;
+	z-index: 999;
 }
 
+	.admin-tag {
+		padding: 6px 12px;
+		box-sizing: border-box;
+		background: #e4e4e4;
+		border: 1px solid transparent;
+		border-radius: 8px;
+		margin-right: 12px;
+		display: inline-block;
+	} .admin-tag:hover {
+		border: 1px solid #333;
+		text-decoration: none;
+		color: inherit;
+	}
+	/* Tags */
+	.admin-tag.info {
+		background: hsl(210, 100%, 50%);
+		color: white;
+	} .admin-tag.interest {
+		background: hsl(280, 80%, 50%);
+		color: white;
+	} .admin-tag.good {
+		background: hsl(120, 80%, 30%);
+		color: white;
+	} .admin-tag.danger {
+		background: hsl(0, 80%, 30%);
+		color: white;
+	} .admin-tag.caution {
+		background: hsl(35, 100%, 40%);
+		color: white;
+	}
+	/* Notes */
+	.admin-tag.note.info {
+		color: hsl(210, 100%, 50%);
+		margin: 0;
+		background: transparent;
+		font-weight: bold;
+	} .admin-tag.note.interest {
+		color: hsl(280, 80%, 50%);
+		margin: 0;
+		background: transparent;
+		font-weight: bold;
+	} .admin-tag.note.good {
+		color: hsl(120, 80%, 30%);
+		margin: 0;
+		background: transparent;
+		font-weight: bold;
+	} .admin-tag.note.danger {
+		color: hsl(0, 80%, 30%);
+		margin: 0;
+		background: transparent;
+		font-weight: bold;
+	} .admin-tag.note.caution {
+		color: hsl(35, 100%, 40%);
+		margin: 0;
+		background: transparent;
+		font-weight: bold;
+	}
+	
+:root {
+	--hue--caution: 50;
+	--hue--danger: 0;
+	--hue--info: 200;
+
+	--amazonite: hsl(167, 65%, 55%);
+	--amazonite-light: hsl(167, 65%, 65%);
+
+	--ruby: hsl(360, 76%, 50%);
+	--ruby-light: hsl(360, 76%, 60%);
+
+	--amber: hsl(24, 100%, 49%);
+	--amber-light: hsl(24, 100%, 59%);
+
+	--citrine: hsl(44, 100%, 48%);
+	--citrine-light: hsl(44, 100%, 58%);
+
+	--emerald: hsl(89, 100%, 42%);
+	--emerald-light: hsl(89, 100%, 52%);
+
+	--apatite: hsl(197, 100%, 60%);
+	--apatite-light: hsl(197, 100%, 70%);
+
+	--sapphire: hsl(206, 100%, 50%);
+	--sapphire-light: hsl(206, 100%, 60%);
+
+	--iolite: hsl(253, 100%, 61%);
+	--iolite-light: hsl(253, 100%, 71%);
+
+	--amethyst: hsl(287, 76%, 50%);
+	--amethyst-light: hsl(287, 76%, 60%);
+
+
+	--garnet: hsl(360, 100%, 32%);
+	--garnet-light: hsl(360, 100%, 42%);
+
+	--copper: hsl(30, 100%, 44%);
+	--copper-light: hsl(30, 100%, 54%);
+
+	--sun: hsl(55, 100%, 66%);
+	--sun-light: hsl(55, 100%, 76%);
+
+	--forest: hsl(90, 100%, 20%);
+	--forest-light: hsl(90, 100%, 30%);
+
+	--ocean: hsl(176, 95%, 35%);
+	--ocean-light: hsl(176, 95%, 45%);
+
+	--blue-hour: hsl(210, 40%, 50%);
+	--blue-hour-light: hsl(210, 40%, 60%);
+
+	--sky: hsl(206, 100%, 85%);
+	--sky-light: hsl(206, 100%, 93%);
+
+	--haze: hsl(253, 60%, 73%);
+	--haze-light: hsl(253, 60%, 83%);
+
+	--purple: hsl(287, 100%, 31%);
+	--purple-light: hsl(287, 100%, 41%);
+
+
+	--black: hsl(213, 5%, 0%);
+	--offblack: hsl(213, 5%, 3%);
+	--dark: hsl(213, 5%, 10%);
+	--gray: hsl(213, 5%, 20%);
+	--graphite: hsl(213, 5%, 35%);
+	--mid-tone: hsl(0, 0%, 42%);
+	--mid: hsl(0, 0%, 50%);
+	--mid-light: hsl(0, 0%, 65%);
+	--metal: hsl(213, 5%, 85%);
+	--metal--light: hsl(213, 5%, 94%);
+	--cloud: hsl(60, 5%, 90%);
+	--offwhite: hsl(60, 5%, 98%);
+	--white: hsl(60, 5%, 100%);
+
+	--caution: hsl(var(--hue--caution), 80%, 90%);
+	--danger: hsl(var(--hue--danger), 80%, 90%);
+	--info: hsl(var(--hue--info), 80%, 90%);
+
+	--shadow: rgba(0, 0, 0, 0.2);
+	--shadow--faint: rgba(0, 0, 0, 0.1);
+}
+
+
+/* List view */
+
+tbody.listing tr td {
+	vertical-align: middle;
+}
+
+#scroll-content {
+	background: #f5f5f5;
+}
 
 @media screen and (max-width: 800px) {
 	body {
@@ -14,6 +181,119 @@ input[type='text'], input[type='password'] {
 	}
 }
 
+@media screen and (max-width: 800px) {
+	input[type='text'], input[type='dropdown'], select, textarea {
+		font-size: 12pt;
+		padding: 10px;
+	}
+}
+
+#sidebar {
+	background: #1e1e1e;
+}
+
+#sidebar-top {
+	margin-top: 0;}
+
+
+
+.nav-group {
+	padding: 0;
+}
+
+	.nav-group svg.i {
+		height: 13px;
+	}
+
+	.nav-title {
+		font-size: 9pt;
+		letter-spacing: 1px;
+	}
+
+	.nav-group li {
+		padding-left: 12px;
+	}
+
+.nav-heading-toggle {
+	margin-left: 0;
+	color: #666;
+}
+
+.nav-heading-btn {
+	margin-right: 4px;
+}
+
+
+#k_page_title {
+	width: 400px;
+}
+
+#k_page_name {
+	width: 400px;
+}
+
+div.field {
+	width: 400px;
+	max-width: 100%;
+	margin-bottom: 35px;
+} .login-form div.field {
+	margin-bottom: auto;
+}
+
+select.k-relation-select {
+	width: 400px;
+	max-width: 100%;
+}
+
+div.k___repeatable {
+	width: 100%;
+}
+
+.ctrls-checkbox label {
+	margin-bottom: 8px;
+}
+
+@media screen and (max-width: 800px) {
+	thead th {
+		font-size: 12pt;
+	}
+}
+
+label.field-label {
+	font-size: 14pt;
+	padding: 0 0 10px;
+}
+
+.ctrl-top {
+	display: flex;
+	flex-wrap: wrap;
+	padding-bottom: 0;
+}
+
+	.ctrl-top .search-field, .ctrl-top .filter-field {
+		margin-bottom: 12px;
+		width: auto;
+		min-width: auto;
+	}
+
+
+
+
+
+#logo-wrap {
+	display: block;
+	width: 50%;
+	margin: 0 auto 0 16px;
+	padding: 16px 0;
+	max-width: 200px;
+} img#logo {
+	height: auto;
+	width: 100%;
+}
+
+
+
+/*
 @media screen and (max-width: 800px) {
 	input[type='text'], input[type='dropdown'], select, textarea {
 		font-size: 12pt;
@@ -40,11 +320,31 @@ input[type='text'], input[type='password'] {
 }
 
 
+#k_page_title {
+	width: 400px;
+}
+
+#k_page_name {
+	width: 400px;
+}
+
 div.field {
+	width: 400px;
+	max-width: 100%;
 	margin-bottom: 35px;
 } .login-form div.field {
 	margin-bottom: auto;
 }
+
+select.k-relation-select {
+	width: 400px;
+	max-width: 100%;
+}
+
+.ctrls-checkbox label {
+	margin-bottom: 8px;
+}
+
 @media screen and (max-width: 800px) {
 	thead th {
 		font-size: 12pt;
@@ -55,3 +355,21 @@ label.field-label {
 	font-size: 14pt;
 	padding: 0 0 10px;
 }
+
+.ctrl-top {
+	display: flex;
+	flex-wrap: wrap;
+	padding-bottom: 0;
+}
+
+	.ctrl-top .search-field, .ctrl-top .filter-field {
+		margin-bottom: 12px;
+		width: auto;
+		min-width: auto;
+	}
+
+
+
+tbody#listing td {
+	vertical-align: middle;
+}*/
