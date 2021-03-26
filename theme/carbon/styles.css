@@ -233,7 +233,7 @@ tbody.listing tr td {
 }
 
 div.field {
-	max-width: 100%;
+	max-width: 80%;
 	margin-bottom: 35px;
 } .login-form div.field {
 	margin-bottom: auto;
