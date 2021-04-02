@@ -4,3 +4,4 @@
 !uploads/.htaccess
 /addons/kfunctions.php
 /error_log
+.DS_Store
