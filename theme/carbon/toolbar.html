@@ -1,34 +1,3 @@
-<!-- Make sure account holders are members -->
-<cms:pages masterpage='accounts.php' skip_custom_fields='1'>
-    <cms:set account_holder_is_member = '0' />
-    <cms:set current_members = "<cms:related_pages 'members' ids_only='1' />" />
-    <cms:set account_holder = "<cms:related_pages 'account_holder' ids_only='1' />" />
-    <cms:if account_holder>
-        <cms:each current_members as="member_id" sep=','>
-            <cms:if member_id = account_holder>
-                <cms:incr account_holder_is_member />
-            </cms:if>
-        </cms:each>
-        <cms:if account_holder_is_member>
-            <!-- Proceed -->
-        <cms:else />
-            <cms:db_persist
-                _masterpage = 'accounts.php'
-                _mode = 'edit'
-                _page_id = k_page_id
-                members = "<cms:show current_members />,<cms:show account_holder />"
-            />
-            <cms:redirect url=k_route_link />
-        </cms:if>
-    <cms:else />
-        <!-- No account holder? Proceed. -->
-    </cms:if>
-</cms:pages>
-
-
-
-
-
 <!-- Display Couch CMS toolbar -->
 
 <div class="btn-group">
