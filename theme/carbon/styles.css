@@ -237,6 +237,91 @@ div.field {
 	margin-bottom: 35px;
 } .login-form div.field {
 	margin-bottom: auto;
+	max-width: 100%;
+}
+
+#simple-wrap {
+	background: white;
+	position: relative;
+	box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+	padding: 60px 60px 80px;
+	animation: fade-in-simple-wrap 0.6s ease-in-out forwards;
+	border-radius: 8px;
+	border: 1px solid #ddd;
+}
+
+@keyframes fade-in-simple-wrap {
+	from {
+		top: 8vh;
+		opacity: 0;
+	} to {
+		top: 12vh;
+		opacity: 1;
+	}
+}
+
+#simple-page {
+	animation: fade-in-simple-page 1s ease-in-out forwards;
+}
+
+@keyframes fade-in-simple-page {
+	from {
+		background: white;
+	} to {
+		background: #eee;
+	}
+}
+
+.simple-box {
+	max-width: 400px;
+	position: relative;
+	left: auto;
+	right: auto;
+	top: 24px;
+	margin: 0 auto;
+	border: 0;
+	animation: fade-in-login 0.8s ease-in-out forwards;
+}
+
+@keyframes fade-in-login {
+	from {
+		opacity: 0;
+		top: 0px;
+	} to {
+		opacity: 1;
+		top: 24px;
+	}
+}
+
+	.simple-box .panel-heading.simple-heading {
+		background: white;
+		text-align: center;
+		border: 0;
+		margin-top: -32px;
+		display: none;
+	}
+
+	.simple-box .simple-content {
+		background: white;
+	}
+
+#simple-logo {
+	display: block;
+	margin: 0 auto;
+	max-width: 160px;
+	height: auto;
+	position: relative;
+	animation: fade-in-logo 0.6s ease-in-out forwards;
+}
+
+@keyframes fade-in-logo {
+	from {
+		opacity: 0;
+		top: -12px;
+	} to {
+		opacity: 1;
+		top: 0px;
+	}
 }
 
 select.k-relation-select {
