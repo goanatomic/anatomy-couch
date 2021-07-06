@@ -22,7 +22,7 @@
     define( 'K_MAX_CACHE_AGE', 7 * 24 ); // Default is 7 days
 
     //define( 'K_UPLOAD_DIR', 'myuploads' );
-    //define( 'K_SNIPPETS_DIR', 'mysnippets' );
+    define( 'K_SNIPPETS_DIR', 'embed' );
 
     define( 'K_EMAIL_TO', 'youremail@gmail.com' );
     define( 'K_EMAIL_FROM', 'contact@yourdomain.com' );
@@ -43,7 +43,7 @@
     define( 'K_EXTRACT_EXIF_DATA', 0 );
     define( 'K_USE_KC_FINDER', 1 );
 
-    //define( 'K_ADMIN_THEME', 'sample' );
+    define( 'K_ADMIN_THEME', 'carbon' );
 
     define( 'K_RECAPTCHA_SITE_KEY', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI' );
     define( 'K_RECAPTCHA_SECRET_KEY', '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe' );
